@@ -19,10 +19,16 @@ module.exports.getUserById = async (req, res) => {
       };
       res.status(ERROR_CODE.OK).send(user);
     })
-    .catch(() => {
-      return res.status(ERROR_CODE.SERVER_ERROR).send({
-        message: 'Ошибка на стороне сервера'
-      });
+    .catch((err) => {
+      if(err.name === 'ValidationError') {
+        return res.status(ERROR_CODE.BAD_REQUEST).send({
+          message: 'Переданы некорректные данные'
+        })
+      } else {
+        return res.status(ERROR_CODE.SERVER_ERROR).send({
+          message: 'Ошибка на стороне сервера'
+        });
+      }
     });
 }
 
@@ -43,7 +49,7 @@ module.exports.createUser = (req, res) => {
           });
         }
       })
-  
+
 }
 
 module.exports.updateUser =  (req, res) => {
