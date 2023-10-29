@@ -42,9 +42,15 @@ module.exports.deleteCard = async (req, res) => {
     }
     return res.status(ERROR_CODE.OK).send(deletedCard);
   } catch(err) {
-    return res.status(ERROR_CODE.SERVER_ERROR).send({
-      message: 'Ошибка на стороне сервера'
-    });
+      if(err.name === 'CastError') {
+        return res.status(ERROR_CODE.BAD_REQUEST).send({
+          message: 'Переданы некорректные данные'
+        });
+      } else {
+        return res.status(ERROR_CODE.SERVER_ERROR).send({
+          message: 'Ошибка на стороне сервера'
+        });
+      }
   }
 }
 
