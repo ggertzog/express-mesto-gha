@@ -12,23 +12,24 @@ module.exports.getAllCards = async (req, res) => {
   }
 }
 
-module.exports.createCard = async (req, res) => {
-  try {
+module.exports.createCard = (req, res) => {
     const { name, link } = req.body;
     const  owner = req.user._id;
-    const newCard = { name, link, owner};
-    return res.status(ERROR_CODE.CREATED).send(Card.create(newCard));
-  } catch(err) {
-      if(err.name === 'ValidationError') {
-        return res.status(ERROR_CODE.BAD_REQUEST).send({
-          message: 'Переданы некорректные данные'
-        });
-      } else {
-        return res.status(ERROR_CODE.SERVER_ERROR).send({
-          message: 'Ошибка на стороне сервера'
-        });
-      }
-  }
+    Card.create({ name, link, owner })
+      .then((card) => {
+        return res.status(ERROR_CODE.CREATED).send(card);
+      })
+      .catch((err) => {
+        if(err.name === 'ValidationError') {
+          return res.status(ERROR_CODE.BAD_REQUEST).send({
+            message: 'Переданы некорректные данные'
+          });
+        } else {
+          return res.status(ERROR_CODE.SERVER_ERROR).send({
+            message: 'Ошибка на стороне сервера'
+          });
+        }
+      });
 }
 
 module.exports.deleteCard = async (req, res) => {
