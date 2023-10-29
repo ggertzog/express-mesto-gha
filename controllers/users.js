@@ -26,21 +26,24 @@ module.exports.getUserById = async (req, res) => {
     });
 }
 
-module.exports.createUser = async (req, res) => {
-  try {
-    const newUser = await new User(req.body);
-    return res.status(ERROR_CODE.CREATED).send(newUser.save());
-} catch(err) {
-    if(err.name === 'ValidationError') {
-      return res.status(ERROR_CODE.BAD_REQUEST).send({
-        message: 'Переданы некорректные данные'
-      });
-    } else {
-      return res.status(ERROR_CODE.SERVER_ERROR).send({
-        message: 'Ошибка на стороне сервера'
+module.exports.createUser = (req, res) => {
+    const { name, about, avatar} = (req.body);
+    User.create({ name, about, avatar })
+      .then((user) => {
+        res.status(ERROR_CODE.CREATED).send(user);
       })
-    }
-  }
+      .catch((err) => {
+        if(err.name === 'ValidationError') {
+          return res.status(ERROR_CODE.BAD_REQUEST).send({
+            message: 'Переданы некорректные данные'
+          });
+        } else {
+          return res.status(ERROR_CODE.SERVER_ERROR).send({
+            message: 'Ошибка на стороне сервера'
+          });
+        }
+      })
+  
 }
 
 module.exports.updateUser =  (req, res) => {
