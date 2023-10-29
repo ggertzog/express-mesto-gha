@@ -62,11 +62,17 @@ module.exports.likeCard = (req, res) => {
       }
       res.status(ERROR_CODE.OK).send({card});
     })
-    .catch(() => {
-      return res.status(ERROR_CODE.SERVER_ERROR).send({
-        message: "Ошибка на стороне сервера"
-      });
-    })
+    .catch((err) => {
+      if(err.name === 'CastError') {
+        return res.status(ERROR_CODE.BAD_REQUEST).send({
+          message: 'Переданы некорректные данные'
+        })
+      } else {
+        return res.status(ERROR_CODE.SERVER_ERROR).send({
+          message: "Ошибка на стороне сервера"
+        });
+      }
+    });
 }
 
 module.exports.dislikeCard = (req, res) => {
@@ -83,9 +89,15 @@ module.exports.dislikeCard = (req, res) => {
       }
       res.status(ERROR_CODE.OK).send({card});
     })
-    .catch(() => {
-      return res.status(ERROR_CODE.SERVER_ERROR).send({
-        message: "Ошибка на стороне сервера"
-      });
-    })
+    .catch((err) => {
+      if(err.name === 'CastError') {
+        return res.status(ERROR_CODE.BAD_REQUEST).send({
+          message: 'Переданы некорректные данные'
+        })
+      } else {
+        return res.status(ERROR_CODE.SERVER_ERROR).send({
+          message: "Ошибка на стороне сервера"
+        });
+      }
+    });
 }
