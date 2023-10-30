@@ -7,15 +7,12 @@ const router = require('./routes');
 
 const { PORT = 3000 } = process.env;
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 const app = express();
 
 app.use(express.json());
-app.use(helmet);
+app.use(helmet());
 
 app.use((req, res, next) => {
   req.user = {
