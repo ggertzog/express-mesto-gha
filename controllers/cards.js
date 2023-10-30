@@ -17,19 +17,17 @@ module.exports.createCard = (req, res) => {
     const  owner = req.user._id;
     Card.create({ name, link, owner })
       .then((card) => {
-        return res.status(ERROR_CODE.CREATED).send(card);
+        res.status(ERROR_CODE.CREATED).send(card);
       })
       .catch((err) => {
         if(err.name === 'ValidationError') {
           res.status(ERROR_CODE.BAD_REQUEST).send({
             message: 'Переданы некорректные данные'
           });
-          return;
         } else {
           res.status(ERROR_CODE.SERVER_ERROR).send({
             message: 'Ошибка на стороне сервера'
           });
-          return;
         }
       });
 }
@@ -49,12 +47,10 @@ module.exports.deleteCard = async (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         });
-        return;
       } else {
         res.status(ERROR_CODE.SERVER_ERROR).send({
           message: 'Ошибка на стороне сервера'
         });
-        return;
       }
   }
 }
@@ -79,12 +75,10 @@ module.exports.likeCard = (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         });
-        return;
       } else {
         res.status(ERROR_CODE.SERVER_ERROR).send({
           message: "Ошибка на стороне сервера"
         });
-        return;
       }
     });
 }
@@ -109,12 +103,10 @@ module.exports.dislikeCard = (req, res) => {
         res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         });
-        return;
       } else {
         res.status(ERROR_CODE.SERVER_ERROR).send({
           message: "Ошибка на стороне сервера"
         });
-        return;
       }
     });
 }
