@@ -17,15 +17,15 @@ module.exports.createCard = (req, res) => {
     const  owner = req.user._id;
     Card.create({ name, link, owner })
       .then((card) => {
-        return res.status(ERROR_CODE.CREATED).send(card);
+        res.status(ERROR_CODE.CREATED).send(card);
       })
       .catch((err) => {
         if(err.name === 'ValidationError') {
-          return res.status(ERROR_CODE.BAD_REQUEST).send({
+          res.status(ERROR_CODE.BAD_REQUEST).send({
             message: 'Переданы некорректные данные'
           });
         } else {
-          return res.status(ERROR_CODE.SERVER_ERROR).send({
+          res.status(ERROR_CODE.SERVER_ERROR).send({
             message: 'Ошибка на стороне сервера'
           });
         }
@@ -36,18 +36,18 @@ module.exports.deleteCard = async (req, res) => {
   try {
     const deletedCard = await Card.findByIdAndRemove(req.params.cardId);
     if(!deletedCard) {
-      return res.status(ERROR_CODE.NOT_FOUND).send({
+      res.status(ERROR_CODE.NOT_FOUND).send({
         message: 'Карточка не найдена'
-      })
+      });
     }
-    return res.status(ERROR_CODE.OK).send(deletedCard);
+    res.status(ERROR_CODE.OK).send(deletedCard);
   } catch(err) {
       if(err.name === 'CastError') {
-        return res.status(ERROR_CODE.BAD_REQUEST).send({
+        res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         });
       } else {
-        return res.status(ERROR_CODE.SERVER_ERROR).send({
+        res.status(ERROR_CODE.SERVER_ERROR).send({
           message: 'Ошибка на стороне сервера'
         });
       }
@@ -62,7 +62,7 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if(!card) {
-        return res.status(ERROR_CODE.NOT_FOUND).send({
+        res.status(ERROR_CODE.NOT_FOUND).send({
           message: 'Карточка не найдена'
         });
       }
@@ -70,11 +70,11 @@ module.exports.likeCard = (req, res) => {
     })
     .catch((err) => {
       if(err.name === 'CastError') {
-        return res.status(ERROR_CODE.BAD_REQUEST).send({
+        res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         })
       } else {
-        return res.status(ERROR_CODE.SERVER_ERROR).send({
+        res.status(ERROR_CODE.SERVER_ERROR).send({
           message: "Ошибка на стороне сервера"
         });
       }
@@ -89,7 +89,7 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if(!card) {
-        return res.status(ERROR_CODE.NOT_FOUND).send({
+        res.status(ERROR_CODE.NOT_FOUND).send({
           message: 'Карточка не найдена'
         });
       }
@@ -97,11 +97,11 @@ module.exports.dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if(err.name === 'CastError') {
-        return res.status(ERROR_CODE.BAD_REQUEST).send({
+        res.status(ERROR_CODE.BAD_REQUEST).send({
           message: 'Переданы некорректные данные'
         })
       } else {
-        return res.status(ERROR_CODE.SERVER_ERROR).send({
+        res.status(ERROR_CODE.SERVER_ERROR).send({
           message: "Ошибка на стороне сервера"
         });
       }
