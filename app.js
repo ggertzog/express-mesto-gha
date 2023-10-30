@@ -9,7 +9,7 @@ const { PORT = 3000 } = process.env;
 
 app.use(json());
 app.use(helmet);
-app.disable('x-powered-by');
+// app.disable('x-powered-by');
 
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
