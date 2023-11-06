@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
       validator: (v) => validator.isURL(v),
       message: 'Некорректный URL',
     },
-    pattern: "^(http|https)://(www\.)?([a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=]+)+#?$",
+    pattern: "^(http|https)://(www.)?([a-zA-Z0-9-._~:/?#[]@!$&'()*+,;=]+)+#?$",
   },
   email: {
     type: String,
