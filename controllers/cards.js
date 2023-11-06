@@ -1,18 +1,18 @@
+const { CastError, ValidationError } = require('mongoose').Error;
 const Card = require('../models/card');
 const { ERROR_CODE } = require('../utils/constants');
+const { IncorrectError, NotFoundError } = require('../errors/errors');
 
-module.exports.getAllCards = async (req, res) => {
+module.exports.getAllCards = async (req, res, next) => {
   try {
     const cards = await Card.find({});
-    return res.status(ERROR_CODE.OK).send(cards);
+    return res.send(cards);
   } catch(err) {
-    return res.status(ERROR_CODE.SERVER_ERROR).send({
-      message: 'Ошибка на стороне сервера'
-    });
+    return next(err);
   }
 }
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
     const { name, link } = req.body;
     const  owner = req.user._id;
     Card.create({ name, link, owner })
@@ -20,42 +20,30 @@ module.exports.createCard = (req, res) => {
         res.status(ERROR_CODE.CREATED).send(card);
       })
       .catch((err) => {
-        if(err.name === 'ValidationError') {
-          res.status(ERROR_CODE.BAD_REQUEST).send({
-            message: 'Переданы некорректные данные'
-          });
-        } else {
-          res.status(ERROR_CODE.SERVER_ERROR).send({
-            message: 'Ошибка на стороне сервера'
-          });
+        if(err instanceof ValidationError) {
+          return next(new IncorrectError('Переданы некорректные данные'));
         }
+        return next(err);
       });
 }
 
-module.exports.deleteCard = async (req, res) => {
+module.exports.deleteCard = async (req, res, next) => {
   try {
     const deletedCard = await Card.findByIdAndRemove(req.params.cardId);
     if(!deletedCard) {
-      res.status(ERROR_CODE.NOT_FOUND).send({
-        message: 'Карточка не найдена'
-      });
+      next(new NotFoundError('Карточка не найдена'));
       return;
     }
     res.status(ERROR_CODE.OK).send(deletedCard);
   } catch(err) {
-      if(err.name === 'CastError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({
-          message: 'Переданы некорректные данные'
-        });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({
-          message: 'Ошибка на стороне сервера'
-        });
-      }
+    if(err instanceof CastError) {
+      next(new IncorrectError('Переданы некорректные данные'));
+    }
+    next(err);
   }
 }
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -63,27 +51,20 @@ module.exports.likeCard = (req, res) => {
   )
     .then((card) => {
       if(!card) {
-        res.status(ERROR_CODE.NOT_FOUND).send({
-          message: 'Карточка не найдена'
-        });
+        next(new NotFoundError('Карточка не найдена'));
         return;
       }
       res.status(ERROR_CODE.OK).send({card});
     })
     .catch((err) => {
-      if(err.name === 'CastError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({
-          message: 'Переданы некорректные данные'
-        });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера"
-        });
+      if(err instanceof CastError) {
+        return next(new IncorrectError('Переданы некорректные данные'));
       }
+      return next(err);
     });
 }
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -91,22 +72,15 @@ module.exports.dislikeCard = (req, res) => {
   )
     .then((card) => {
       if(!card) {
-        res.status(ERROR_CODE.NOT_FOUND).send({
-          message: 'Карточка не найдена'
-        });
+        next(new NotFoundError('Карточка не найдена'));
         return;
       }
       res.status(ERROR_CODE.OK).send({card});
     })
     .catch((err) => {
-      if(err.name === 'CastError') {
-        res.status(ERROR_CODE.BAD_REQUEST).send({
-          message: 'Переданы некорректные данные'
-        });
-      } else {
-        res.status(ERROR_CODE.SERVER_ERROR).send({
-          message: "Ошибка на стороне сервера"
-        });
+      if(err instanceof CastError) {
+        return next(new IncorrectError('Переданы некорректные данные'));
       }
+      return next(err);
     });
 }
