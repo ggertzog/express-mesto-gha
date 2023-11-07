@@ -1,8 +1,7 @@
 const { CastError, ValidationError } = require('mongoose').Error;
 const Card = require('../models/card');
 const { ERROR_CODE } = require('../utils/constants');
-const { IncorrectError, NotFoundError } = require('../errors/errors');
-const AccessError = require('../errors/errors');
+const { IncorrectError, NotFoundError, AccessError } = require('../errors/errors');
 
 module.exports.getAllCards = async (req, res, next) => {
   try {
