@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const helmet = require('helmet');
 const router = require('./routes');
 const { login, createUser } = require('./controllers/users');
@@ -28,7 +29,7 @@ app.post('/signup', signupValidate, createUser);
 
 app.use(auth);
 app.use(router);
-
+app.use(errors());
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({
