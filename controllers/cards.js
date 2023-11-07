@@ -2,6 +2,7 @@ const { CastError, ValidationError } = require('mongoose').Error;
 const Card = require('../models/card');
 const { ERROR_CODE } = require('../utils/constants');
 const { IncorrectError, NotFoundError } = require('../errors/errors');
+const AccessError = require('../errors/AccessError');
 
 module.exports.getAllCards = async (req, res, next) => {
   try {
@@ -29,12 +30,15 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = async (req, res, next) => {
   try {
-    const deletedCard = await Card.findByIdAndRemove(req.params.cardId);
-    if(!deletedCard) {
+    const card = await Card.findByIdAndRemove(req.params.cardId);
+    if(!card) {
       next(new NotFoundError('Карточка не найдена'));
       return;
     }
-    res.status(ERROR_CODE.OK).send(deletedCard);
+    if(card.owner.toString() !== req.user._id.toString()) {
+      throw new AccessError('Ошибка прав доступа');
+    }
+    res.status(ERROR_CODE.OK).send(card);
   } catch(err) {
     if(err instanceof CastError) {
       next(new IncorrectError('Переданы некорректные данные'));

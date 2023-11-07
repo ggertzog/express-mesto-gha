@@ -111,7 +111,7 @@ module.exports.login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'super-puper-strong-secret', { expiresIn: '7d' });
-      res.status(ERROR_CODE.CREATED).send({ token });
+      res.status(ERROR_CODE.OK).send({ token });
     })
     .catch((err) => {
       if(err instanceof ValidationError) {
