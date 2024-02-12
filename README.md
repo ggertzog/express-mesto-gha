@@ -1,5 +1,6 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
+<img src='./mesto-back.png' alt='Баннер'>
 
 
 ## Директории
@@ -17,4 +18,4 @@
 
 ## Ссылка на репозиторий 
 
-https://github.com/ggertzog/express-mesto-gha.git
+[Mesto backend](https://github.com/ggertzog/express-mesto-gha.git)
